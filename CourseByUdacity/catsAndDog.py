@@ -71,13 +71,38 @@ BATCH_SIZE = 100
 IMG_SHAPE = 150
 EPOCHS = 100
 #data preparation
-train_image_generator = ImageDataGenerator(rescale=1./255)
-validation_image_generator = ImageDataGenerator(rescale=1./255)
+# #flipping the image horizontally
+# image_gen = ImageDataGenerator(rescale=1./255, horizontal_flip=True)
+# train_data_gen_flip = image_gen.flow_from_directory(batch_size=BATCH_SIZE,
+#                                                            directory=train_dir,
+#                                                            shuffle=True,
+#                                                            target_size=(IMG_SHAPE, IMG_SHAPE))
+# #rotating the image
+# image_gen = ImageDataGenerator(rescale=1./255, rotation_range=45)
+# train_data_gen_rotate = image_gen.flow_from_directory(batch_size=BATCH_SIZE,
+#                                                            directory=train_dir,
+#                                                            shuffle=True,
+#                                                            target_size=(IMG_SHAPE, IMG_SHAPE))
+# #zoom the image
+# image_gen = ImageDataGenerator(rescale=1./255, zoom_range=0.5)
+# train_data_gen_zoom = image_gen.flow_from_directory(batch_size=BATCH_SIZE,
+#                                                directory=train_dir,
+#                                                shuffle=True,
+#                                                target_size=(IMG_SHAPE, IMG_SHAPE))
+train_image_generator = ImageDataGenerator(rescale=1./255,
+                                           rotation_range=40,
+                                           width_shift_range=-.2,
+                                           height_shift_range=0.2,
+                                           shear_range=0.2,
+                                           zoom_range=0.2,
+                                           horizontal_flip=True,
+                                           fill_mode='nearest')
 train_data_gen = train_image_generator.flow_from_directory(batch_size=BATCH_SIZE,
                                                            directory=train_dir,
                                                            shuffle=True,
                                                            target_size=(IMG_SHAPE, IMG_SHAPE),
                                                            class_mode='binary')
+validation_image_generator = ImageDataGenerator(rescale=1./255)
 val_data_gen = validation_image_generator.flow_from_directory(batch_size=BATCH_SIZE,
                                                            directory=train_dir,
                                                            shuffle=True,
@@ -88,7 +113,7 @@ sample_training_images, _ = next(train_data_gen)
 plotImages(sample_training_images[:5])
 #model creation
 model = tf.keras.Sequential([
-    tf.keras.layers.Input(shape=(150, 150, 3)),
+    tf.keras.layers.Input(shape=(IMG_SHAPE, IMG_SHAPE, 3)),
     tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
     tf.keras.layers.MaxPooling2D(2, 2),
 
