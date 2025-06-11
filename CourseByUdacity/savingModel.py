@@ -85,7 +85,7 @@ model.save(export_path_keras)
 
 reloaded = tf.keras.models.load_model(
     export_path_keras,
-    custom_objects={'KerasLayes': hub.KerasLayer}
+    custom_objects={'KerasLayer': hub.KerasLayer}
 )
 reloaded.summary()
 
@@ -102,7 +102,7 @@ export_path_sm = "./{}".format(int(t))
 print(export_path_sm)
 tf.saved_model.save(model, export_path_sm)
 
-reloaded_sm = rf.saved_model.load(export_path_sm)
+reloaded_sm = tf.saved_model.load(export_path_sm)
 reloaded_sm_result_batch = reloaded_sm(image_batch, training=False).numpy()
 (abs(result_batch - reloaded_result_batch)).max()
 
